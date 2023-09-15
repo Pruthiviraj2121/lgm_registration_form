@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registration Form</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h2>Registration Form</h2>
+        <form id="registrationForm">
+            <div class="input">
+                <label for="name">Name:</label>
+                <input type="text" id="name" name="name" required>
+            </div>
+            <div class="input">
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+            <div class="input">
+                <label for="web">Website:</label>
+                <input type="url" id="web" name="web">
+            </div>
+            <div class="input">
+                <label for="image">Image Link:</label>
+                <input type="file" id="image" name="image">
+            </div>
+            <div class="input">
+                <label>Gender:</label>
+                <input type="checkbox" id="male" name="gender" value="Male">
+                <label for="male">Male</label>
+                <input type="checkbox" id="female" name="gender" value="Female">
+                <label for="female">Female</label>
+            </div>
+            <div class="input">
+                <label>Skills:</label>
+                <input type="checkbox" id="html" name="skills" value="HTML">
+                <label for="html">HTML</label>
+                <input type="checkbox" id="css" name="skills" value="CSS">
+                <label for="css">CSS</label>
+                <input type="checkbox" id="js" name="skills" value="JavaScript">
+                <label for="js">JavaScript</label>
+                <input type="checkbox" id="react" name="skills" value="react">
+                <label for="react">ReactJS</label>
+            </div>
+            <button type="enroll">Enroll</button>
+            <button type="clear">Clear</button>
+        </form>
+        <hr class="separation-border" />
+        <div class="output" id="output"></div>
+        <!--This for outut value-->
+    </div>
+
+    <script>
+        const registrationForm = document.getElementById("registrationForm");
+        const outputDiv = document.getElementById("output");
+        const enrollments = []; //empty list for display the output of input value
+
+        registrationForm.addEventListener("submit", function (e) {
+            e.preventDefault(); //.preventDefault() is to oppose the submit event to be not active until submitted
+
+            const name = document.getElementById("name").value;
+            const email = document.getElementById("email").value;
+            const website = document.getElementById("web").value;
+
+             //both gender and skills are referred from chatGPT
+            const genderCheckboxes = document.querySelectorAll('input[name="gender"]:checked');
+            const genderValues = Array.from(genderCheckboxes).map(checkbox => checkbox.value);
+            const skillCheckboxes = document.querySelectorAll('input[name="skills"]:checked');
+            const skillValues = Array.from(skillCheckboxes).map(checkbox => checkbox.value);
+
+            //As the image file is local so it is not responding (Not allowded to local resources) need to get help from youtube
+            const imageInput = document.getElementById("image");
+            const image = imageInput.files[0]; // Get the selected image file
+
+            // Read the image file and display it
+            const reader = new FileReader();
+
+            reader.onload = function () {
+                const imageSrc = reader.result;
+
+            const enrollment = {
+                name,
+                email,
+                website,
+                image: imageSrc,
+                gender: genderValues,
+                skills: skillValues,
+            };
+
+            enrollments.push(enrollment);
+
+            displayEnrollments();
+            clearForm();
+        };
+        if(image){
+            reader.readAsDataURL(image); //It reads the file as url
+        }
+        else{
+            alert("Please select an Image");
+        }
+        });
+
+        function displayEnrollments() {
+            let outputHTML = "<h2>Enrolled Students</h2>";
+
+            enrollments.forEach((enrollment, index) => { //index for take the count of enrolled students
+                outputHTML += `
+                    <div class="output">
+                        <h5>Student ${index + 1}</h5>
+                        <p><strong>Name:</strong> ${enrollment.name}</p>
+                        <p><strong>Email:</strong> ${enrollment.email}</p>
+                        <p><strong>Website:</strong> ${enrollment.website}</p>
+                        <p><strong></strong> <img src="${enrollment.image}" alt="User Image" class="user-image"></p>
+                        <p><strong>Gender:</strong> ${enrollment.gender.join(", ")}</p>
+                        <p><strong>Skills:</strong> ${enrollment.skills.join(", ")}</p>
+                    </div>
+                `;
+            });
+
+            outputDiv.innerHTML = outputHTML;
+        }
+
+        function clearForm() {
+            registrationForm.reset();
+        }
+    </script>
+</body>
+</html>
